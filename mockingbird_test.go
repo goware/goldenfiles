@@ -87,3 +87,17 @@ func TestClientMockCustomBody(t *testing.T) {
 		assert.NoError(t, err)
 	}
 }
+
+func TestStores(t *testing.T) {
+	stores := []store.Store{
+		&store.File{},
+	}
+
+	for _, s := range stores {
+		client := New(s)
+		for i := 0; i < 5; i++ {
+			_, err := client.Get("https://golang.org/pkg/net/http/")
+			assert.NoError(t, err)
+		}
+	}
+}
