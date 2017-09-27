@@ -1,8 +1,10 @@
-package store
+package mem
 
 import (
 	"errors"
 	"sync"
+
+	"github.com/goware/mockingbird/store"
 )
 
 type Mem struct {
@@ -39,3 +41,5 @@ func (m *Mem) Delete(key string) error {
 	}
 	return nil
 }
+
+var _ = store.Store(&Mem{})

@@ -1,16 +1,35 @@
-package store
+package bolt
 
 import (
+	"time"
+
 	"github.com/boltdb/bolt"
+	"github.com/goware/mockingbird/store"
 )
 
+const defaultBucketName = "mockingbird"
+
 type Bolt struct {
-	DB *bolt.DB
+	DB         *bolt.DB
+	BucketName string
 }
 
-const bucketName = "mockingbird"
+func NewStore(name string) *Bolt {
+	db, err := bolt.Open(name, 0600, &bolt.Options{Timeout: 1 * time.Second})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return &Bolt{
+		DB: db,
+	}
+}
 
 func (b *Bolt) bucket(tx *bolt.Tx) (*bolt.Bucket, error) {
+	bucketName := b.BucketName
+	if bucketName == "" {
+		bucketName = defaultBucketName
+	}
 	return tx.CreateBucketIfNotExists([]byte(bucketName))
 }
 
@@ -51,3 +70,5 @@ func (b *Bolt) Delete(key string) error {
 	})
 	return err
 }
+
+var _ = store.Store(&Bolt{})

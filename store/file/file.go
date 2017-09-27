@@ -1,4 +1,4 @@
-package store
+package file
 
 import (
 	"crypto/md5"
@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+
+	"github.com/goware/mockingbird/store"
 )
 
 var (
@@ -19,11 +21,16 @@ var (
 var TestdataDir = "testdata"
 
 type File struct {
-	mu  sync.Mutex
-	Ext string
+	mu      sync.Mutex
+	Ext     string
+	Dirname string
 }
 
 const fileNameMaxLength = 128
+
+func NewStore(dirname string, ext string) *File {
+	return &File{Dirname: dirname, Ext: ext}
+}
 
 func (f *File) safeFileName(s string) string {
 	s = reUnsafeFileChars.ReplaceAllString(s, "-")
@@ -69,4 +76,4 @@ func (f *File) Delete(key string) error {
 	return os.Remove(key)
 }
 
-var _ = Store(&File{})
+var _ = store.Store(&File{})

@@ -8,50 +8,60 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/goware/mockingbird/dump"
 	"github.com/goware/mockingbird/store"
 )
 
-type roundTripper struct {
-	store store.Store
+type Transport struct {
+	store          store.Store
+	encoderDecoder *dump.Dump
 }
 
-func (rt *roundTripper) get(req *http.Request) (*http.Response, error) {
-	id, err := rt.requestID(req)
+func (tr *Transport) SetEncoderDecoder(ed dump.EncoderDecoder) {
+	tr.encoderDecoder = dump.New(ed)
+}
+
+func (tr *Transport) SetStore(s store.Store) {
+	tr.store = s
+}
+
+func (tr *Transport) get(req *http.Request) (*http.Response, error) {
+	id, err := tr.requestID(req)
 	if err != nil {
 		return nil, err
 	}
 
-	buf, err := rt.store.Get(id)
+	buf, err := tr.store.Get(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return unserializeResponse(buf)
+	return tr.encoderDecoder.Decode(buf)
 }
 
-func (rt *roundTripper) remove(req *http.Request) error {
-	id, err := rt.requestID(req)
+func (tr *Transport) Remove(req *http.Request) error {
+	id, err := tr.requestID(req)
 	if err != nil {
 		return err
 	}
-	return rt.store.Delete(id)
+	return tr.store.Delete(id)
 }
 
-func (rt *roundTripper) set(req *http.Request, res *http.Response) error {
-	id, err := rt.requestID(req)
-	if err != nil {
-		return err
-	}
-
-	buf, err := serializeResponse(res)
+func (tr *Transport) set(req *http.Request, res *http.Response) error {
+	id, err := tr.requestID(req)
 	if err != nil {
 		return err
 	}
 
-	return rt.store.Set(id, buf)
+	buf, err := tr.encoderDecoder.Encode(res)
+	if err != nil {
+		return err
+	}
+
+	return tr.store.Set(id, buf)
 }
 
-func (rt *roundTripper) requestID(req *http.Request) (string, error) {
+func (tr *Transport) requestID(req *http.Request) (string, error) {
 	buf := []byte{}
 
 	if err := req.Context().Err(); err != nil {
@@ -77,10 +87,10 @@ func (rt *roundTripper) requestID(req *http.Request) (string, error) {
 	), nil
 }
 
-func (rt *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+func (tr *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	t := &http.Transport{}
 
-	res, err := rt.get(req)
+	res, err := tr.get(req)
 	if err == nil {
 		res.Request = req
 		return res, nil
@@ -91,9 +101,31 @@ func (rt *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 
-	if err := rt.set(req, res); err != nil {
+	if err := tr.set(req, res); err != nil {
 		return nil, err
 	}
 
 	return res, nil
+}
+
+func (tr *Transport) Record(req *http.Request, res *http.Response) error {
+	if res.StatusCode == 0 {
+		res.StatusCode = http.StatusOK
+	}
+	if res.Status == "" {
+		res.Status = "200 OK"
+	}
+	if res.Proto == "" {
+		res.Proto = "HTTP/1.0"
+	}
+	if res.ProtoMajor == 0 {
+		res.ProtoMajor = 1
+	}
+	if res.Header == nil {
+		res.Header = http.Header{
+			"Content-Type": {"text/plain"},
+		}
+	}
+
+	return tr.set(req, res)
 }
