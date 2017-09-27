@@ -34,7 +34,9 @@ func TestSerializeUnserialize(t *testing.T) {
 		assert.Equal(t, res.StatusCode, res2.StatusCode)
 		assert.Equal(t, res.ProtoMajor, res2.ProtoMajor)
 		assert.Equal(t, res.ProtoMinor, res2.ProtoMinor)
-		assert.Equal(t, res.ContentLength, res2.ContentLength)
+		if res.ContentLength > 0 {
+			assert.Equal(t, res.ContentLength, res2.ContentLength)
+		}
 		assert.Equal(t, res.TransferEncoding, res2.TransferEncoding)
 		assert.Equal(t, res.Uncompressed, res2.Uncompressed)
 

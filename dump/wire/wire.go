@@ -74,7 +74,7 @@ func (wire *Wire) Decode(buf []byte) (*dump.Response, error) {
 				}
 				m := reHTTPHeader.FindAllStringSubmatch(s, -1)
 				if len(m) > 0 {
-					res.Header.Add(m[0][0], m[0][1])
+					res.Header.Add(m[0][1], m[0][2])
 				}
 			default:
 				body = append(body, line...)
@@ -86,9 +86,10 @@ func (wire *Wire) Decode(buf []byte) (*dump.Response, error) {
 		body = append(body, line...)
 	}
 
-	if cl := res.Header.Get("Content-Length"); cl != "" {
-		res.ContentLength, _ = strconv.ParseInt(cl, 10, 64)
-	}
+	contentLength := len(body)
+
+	res.Header.Set("Content-Length", fmt.Sprintf("%d", contentLength))
+	res.ContentLength = int64(contentLength)
 
 	res.Body = string(body)
 

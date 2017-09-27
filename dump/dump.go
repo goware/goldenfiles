@@ -2,6 +2,7 @@ package dump
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -62,6 +63,7 @@ func (d *Dump) Decode(buf []byte) (*http.Response, error) {
 		Body:             ioutil.NopCloser(bytes.NewBufferString(dump.Body)),
 		Status:           dump.Status,
 		StatusCode:       dump.StatusCode,
+		Proto:            fmt.Sprintf("HTTP/%d.%d", dump.ProtoMajor, dump.ProtoMinor),
 		ProtoMajor:       dump.ProtoMajor,
 		ProtoMinor:       dump.ProtoMinor,
 		ContentLength:    dump.ContentLength,
