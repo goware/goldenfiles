@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/goware/mockingbird/store"
 )
@@ -69,9 +70,9 @@ func (rt *roundTripper) requestID(req *http.Request) (string, error) {
 	}
 
 	return fmt.Sprintf(
-		"%s:%s:%s",
+		"%s_%s_%s",
 		req.Method,
-		req.URL.String(),
+		strings.Trim(req.URL.String(), "/"),
 		fmt.Sprintf("%x", sha256.Sum256(buf)),
 	), nil
 }
