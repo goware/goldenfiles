@@ -2,8 +2,11 @@ package mockingbird
 
 import (
 	"bytes"
+	"compress/gzip"
+	"compress/zlib"
 	"crypto/sha256"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -53,6 +56,37 @@ func (tr *Transport) set(req *http.Request, res *http.Response) error {
 		return err
 	}
 
+	var bodyReader = io.Reader(res.Body)
+
+	switch res.Header.Get("Content-Encoding") {
+	case "deflate":
+		z, err := zlib.NewReader(bodyReader)
+		if err != nil {
+			return err
+		}
+		res.Header.Del("Content-Encoding")
+
+		defer z.Close()
+		bodyReader = io.Reader(z)
+	case "gzip":
+		gz, err := gzip.NewReader(bodyReader)
+		if err != nil {
+			return err
+		}
+		res.Header.Del("Content-Encoding")
+
+		defer gz.Close()
+		bodyReader = io.Reader(gz)
+	}
+
+	var body []byte
+	body, err = ioutil.ReadAll(bodyReader)
+	if err != nil {
+		return err
+	}
+
+	res.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
 	buf, err := tr.encoderDecoder.Encode(res)
 	if err != nil {
 		return err
@@ -88,7 +122,9 @@ func (tr *Transport) requestID(req *http.Request) (string, error) {
 }
 
 func (tr *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
-	t := &http.Transport{}
+	t := &http.Transport{
+		DisableCompression: true,
+	}
 
 	res, err := tr.get(req)
 	if err == nil {
@@ -96,6 +132,7 @@ func (tr *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		return res, nil
 	}
 
+	// Get data
 	res, err = t.RoundTrip(req)
 	if err != nil {
 		return nil, err
