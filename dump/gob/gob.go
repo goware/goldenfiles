@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 
-	"github.com/goware/mockingbird/dump"
+	"github.com/goware/goldenfiles/dump"
 )
 
 type Gob struct {

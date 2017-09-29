@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/goware/mockingbird/dump"
+	"github.com/goware/goldenfiles/dump"
 )
 
 var (

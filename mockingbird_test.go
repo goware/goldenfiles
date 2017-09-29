@@ -1,4 +1,4 @@
-package mockingbird
+package goldenfiles
 
 import (
 	"io/ioutil"
@@ -6,14 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/goware/mockingbird/dump"
-	"github.com/goware/mockingbird/dump/gob"
-	"github.com/goware/mockingbird/dump/json"
-	"github.com/goware/mockingbird/dump/wire"
-	"github.com/goware/mockingbird/store"
-	"github.com/goware/mockingbird/store/bolt"
-	"github.com/goware/mockingbird/store/file"
-	"github.com/goware/mockingbird/store/mem"
+	"github.com/goware/goldenfiles/dump"
+	"github.com/goware/goldenfiles/dump/gob"
+	"github.com/goware/goldenfiles/dump/json"
+	"github.com/goware/goldenfiles/dump/wire"
+	"github.com/goware/goldenfiles/store"
+	"github.com/goware/goldenfiles/store/bolt"
+	"github.com/goware/goldenfiles/store/file"
+	"github.com/goware/goldenfiles/store/mem"
 	"github.com/stretchr/testify/assert"
 )
 

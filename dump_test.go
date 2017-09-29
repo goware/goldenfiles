@@ -1,14 +1,14 @@
-package mockingbird
+package goldenfiles
 
 import (
 	"io/ioutil"
 	"net/http"
 	"testing"
 
-	"github.com/goware/mockingbird/dump"
-	gobd "github.com/goware/mockingbird/dump/gob"
-	jsond "github.com/goware/mockingbird/dump/json"
-	wired "github.com/goware/mockingbird/dump/wire"
+	"github.com/goware/goldenfiles/dump"
+	gobd "github.com/goware/goldenfiles/dump/gob"
+	jsond "github.com/goware/goldenfiles/dump/json"
+	wired "github.com/goware/goldenfiles/dump/wire"
 	"github.com/stretchr/testify/assert"
 )
 

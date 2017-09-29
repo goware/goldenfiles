@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/goware/mockingbird/store"
+	"github.com/goware/goldenfiles/store"
 )
 
 type Mem struct {

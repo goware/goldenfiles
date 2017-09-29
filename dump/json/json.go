@@ -3,7 +3,7 @@ package json
 import (
 	"encoding/json"
 
-	"github.com/goware/mockingbird/dump"
+	"github.com/goware/goldenfiles/dump"
 )
 
 type JSON struct {

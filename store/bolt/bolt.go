@@ -4,10 +4,10 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
-	"github.com/goware/mockingbird/store"
+	"github.com/goware/goldenfiles/store"
 )
 
-const defaultBucketName = "mockingbird"
+const defaultBucketName = "goldenfiles"
 
 type Bolt struct {
 	DB         *bolt.DB

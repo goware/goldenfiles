@@ -1,11 +1,11 @@
-package mockingbird
+package goldenfiles
 
 import (
 	"net/http"
 
-	"github.com/goware/mockingbird/dump"
-	gobd "github.com/goware/mockingbird/dump/gob"
-	mems "github.com/goware/mockingbird/store/mem"
+	"github.com/goware/goldenfiles/dump"
+	gobd "github.com/goware/goldenfiles/dump/gob"
+	mems "github.com/goware/goldenfiles/store/mem"
 )
 
 func NewTransport() *Transport {

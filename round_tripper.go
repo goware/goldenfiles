@@ -1,4 +1,4 @@
-package mockingbird
+package goldenfiles
 
 import (
 	"bytes"
@@ -11,8 +11,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/goware/mockingbird/dump"
-	"github.com/goware/mockingbird/store"
+	"github.com/goware/goldenfiles/dump"
+	"github.com/goware/goldenfiles/store"
 )
 
 type Transport struct {
