@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"compress/zlib"
-	"crypto/sha256"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -114,10 +113,9 @@ func (tr *Transport) requestID(req *http.Request) (string, error) {
 	}
 
 	return fmt.Sprintf(
-		"%s_%s_%s",
+		"%s_%s",
 		req.Method,
 		strings.Trim(req.URL.String(), "/"),
-		fmt.Sprintf("%x", sha256.Sum256(buf)),
 	), nil
 }
 
